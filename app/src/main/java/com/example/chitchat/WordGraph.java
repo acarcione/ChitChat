@@ -6,9 +6,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-class wordGraph {
+class WordGraph
+{
     //Taken from Decompiled Source
-    public static final String TAG = "acarcione.wordGraph";
+    public static final String TAG = "wordGraph";
     private ArrayList<ArrayList<Boolean>> edges = new ArrayList(32);
     private ArrayList<WordGraphNode> nodes = new ArrayList(16);
 
@@ -94,7 +95,13 @@ class wordGraph {
 
     public ArrayList<String> getNeighbors(String word) {
         ArrayList<String> neighbors = new ArrayList();
-        ArrayList<Boolean> row = (ArrayList) this.edges.get(getNodeIDX(word));
+        int wordIdx = getNodeIDX(word);
+        if (wordIdx < 0)
+        {
+            Log.d(TAG, "getNeighbors: Returned empty neighbors");
+            return neighbors;
+        }
+        ArrayList<Boolean> row = (ArrayList) this.edges.get(wordIdx);
         for (int i = 0; i < row.size(); i++) {
             if (((Boolean) row.get(i)).booleanValue()) {
                 neighbors.add(((WordGraphNode) this.nodes.get(i)).word);
@@ -112,8 +119,15 @@ class wordGraph {
         return ((WordGraphNode) this.nodes.get(outIDX)).word;
     }
 
-    public String getRandomWord() {
-        return ((WordGraphNode) this.nodes.get(positiveRandom.nextInt(this.nodes.size()))).word;
+    public String getRandomWord()
+    {
+        int randIndex = positiveRandom.nextInt(this.nodes.size());
+        if (randIndex < 0)
+        {
+            Log.e(TAG, "getRandomWord: Invalid index returned. Graph is empty");
+            return "Null";
+        }
+        return (this.nodes.get(randIndex)).word;
     }
 
     public String toString() {
@@ -139,7 +153,7 @@ class wordGraph {
 
     public static void main(String[] args) {
         System.out.println("This is just test code!!");
-        wordGraph g = new wordGraph();
+        WordGraph g = new WordGraph();
         g.addWord("vine");
         g.addWord("wine");
         g.addWord("wins");

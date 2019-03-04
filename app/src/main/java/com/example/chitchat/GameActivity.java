@@ -38,8 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Game extends AppCompatActivity {
-    public static final String TAG = "acarcione.Game";
+public class GameActivity extends AppCompatActivity {
+    public static final String TAG = "GameActivity";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -24,17 +24,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Launch extends AppCompatActivity {
-    private static final String TAG = "acarcion.Launch";
+//Taken from decompiled source
+public class LaunchActivity extends AppCompatActivity {
+    private static final String TAG = "LaunchActivity";
     private Context ctx;
     private EditText endET;
     private SharedPreferences prefs;
     private EditText startET;
-    private wordGraph wg;
+    private WordGraph wordGraph;
 
     /* renamed from: edu.fandm.enovak.wordly.Launch$1 */
-    class launch1 implements TextWatcher {
-        launch1() {
+    class textWatcher implements TextWatcher {
+        textWatcher() {
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -45,9 +46,9 @@ public class Launch extends AppCompatActivity {
 
         public void afterTextChanged(Editable s) {
             int len = s.length();
-            Launch.this.endET.setFilters(new InputFilter[]{new LengthFilter(len)});
-            if (s.length() < Launch.this.endET.getText().length()) {
-                Launch.this.endET.setText(Launch.this.endET.getText().subSequence(0, s.length()));
+            LaunchActivity.this.endET.setFilters(new InputFilter[]{new LengthFilter(len)});
+            if (s.length() < LaunchActivity.this.endET.getText().length()) {
+                LaunchActivity.this.endET.setText(LaunchActivity.this.endET.getText().subSequence(0, s.length()));
             }
         }
     }
@@ -61,16 +62,16 @@ public class Launch extends AppCompatActivity {
         }
 
         protected void onPreExecute() {
-            this.tv = Launch.this.findViewById(R.id.tv_loading);
+            this.tv = LaunchActivity.this.findViewById(R.id.tv_loading);
             this.tv.setVisibility(View.INVISIBLE);
-            this.tv.setAnimation(AnimationUtils.loadAnimation(Launch.this.ctx, R.anim.blink));
+            this.tv.setAnimation(AnimationUtils.loadAnimation(LaunchActivity.this.ctx, R.anim.blink));
             this.tv.animate();
         }
 
         protected ArrayList<String> doInBackground(String... params) {
             this.start = params[0];
             this.end = params[1];
-            wordGraph wg = Launch.this.buildGraph(this.start.length());
+            WordGraph wg = LaunchActivity.this.buildGraph(this.start.length());
             HashMap<String, String> map = new HashMap();
             HashMap<String, Boolean> marked = new HashMap();
             LinkedList<String> q = new LinkedList();
@@ -108,14 +109,14 @@ public class Launch extends AppCompatActivity {
                 tmp.append("' to '");
                 tmp.append(this.end);
                 tmp.append("'");
-                Toast.makeText(Launch.this.ctx, tmp.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LaunchActivity.this.ctx, tmp.toString(), Toast.LENGTH_SHORT).show();
                 return;
             }
-            Intent i = new Intent(Launch.this.ctx, Game.class);
+            Intent i = new Intent(LaunchActivity.this.ctx, GameActivity.class);
             i.putExtra("start_word", this.start);
             i.putExtra("end_word", this.end);
             i.putStringArrayListExtra("solution", solution);
-            Launch.this.startActivity(i);
+            LaunchActivity.this.startActivity(i);
         }
     }
 
@@ -126,9 +127,9 @@ public class Launch extends AppCompatActivity {
         }
 
         protected void onPreExecute() {
-            this.tv = Launch.this.findViewById(R.id.tv_loading);
+            this.tv = LaunchActivity.this.findViewById(R.id.tv_loading);
             this.tv.setVisibility(View.INVISIBLE);
-            this.tv.setAnimation(AnimationUtils.loadAnimation(Launch.this.ctx, R.anim.blink));
+            this.tv.setAnimation(AnimationUtils.loadAnimation(LaunchActivity.this.ctx, R.anim.blink));
             this.tv.animate();
         }
 
@@ -142,7 +143,7 @@ public class Launch extends AppCompatActivity {
             while (hops < SEQ_LEN) {
                 Iterator it = curRound.iterator();
                 while (it.hasNext()) {
-                    Iterator it2 = Launch.this.wg.getNeighbors((String) it.next()).iterator();
+                    Iterator it2 = LaunchActivity.this.wordGraph.getNeighbors((String) it.next()).iterator();
                     while (it2.hasNext()) {
                         String n = (String) it2.next();
                         if (!marked.containsKey(n)) {
@@ -166,15 +167,15 @@ public class Launch extends AppCompatActivity {
         }
 
         protected String[] doInBackground(Integer... params) {
-            wordGraph wg = Launch.this.buildGraph(params[0].intValue());
+            WordGraph wg = LaunchActivity.this.buildGraph(params[0].intValue());
             String[] startAndEnd = new String[2];
             while (startAndEnd[1] == null) {
                 startAndEnd[0] = wg.getRandomWord();
                 try {
                     startAndEnd[1] = genSequence(startAndEnd[0], 3);
                 } catch (IllegalStateException ise) {
-                    Log.d(Launch.TAG, ise.getMessage());
-                    String str = Launch.TAG;
+                    Log.d(LaunchActivity.TAG, ise.getMessage());
+                    String str = LaunchActivity.TAG;
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("Giving up on start word: ");
                     stringBuilder.append(startAndEnd[0]);
@@ -190,8 +191,8 @@ public class Launch extends AppCompatActivity {
             this.tv.setVisibility(View.VISIBLE);
             String s = result[0];  //result[null] was original line
             String e = result[1];
-            Launch.this.startET.setText(s);
-            Launch.this.endET.setText(e);
+            LaunchActivity.this.startET.setText(s);
+            LaunchActivity.this.endET.setText(e);
         }
     }
 
@@ -202,7 +203,7 @@ public class Launch extends AppCompatActivity {
         this.startET = (EditText) findViewById(R.id.et_start);
         this.endET = (EditText) findViewById(R.id.et_end);
         this.prefs = getSharedPreferences(BuildConfig.APPLICATION_ID, 0);
-        this.startET.addTextChangedListener(new launch1());
+        this.startET.addTextChangedListener(new textWatcher());
         if (savedInstanceState == null) {
             genGame(null);
         }
@@ -229,15 +230,15 @@ public class Launch extends AppCompatActivity {
         findViewById(R.id.tv_loading).setVisibility(View.VISIBLE);
         if (this.prefs.getBoolean("firstrun", true)) {
             this.prefs.edit().putBoolean("firstrun", false).commit();
-            startActivity(new Intent(this.ctx, Explain.class));
+            startActivity(new Intent(this.ctx, ExplainActivity.class));
         }
     }
 
-    private wordGraph buildGraph(int len) {
-        if (this.wg != null && this.wg.getRandomWord().length() == len) {
-            return this.wg;
+    private WordGraph buildGraph(int len) {
+        if (this.wordGraph != null && this.wordGraph.getRandomWord().length() == len) {
+            return this.wordGraph;
         }
-        this.wg = new wordGraph();
+        this.wordGraph = new WordGraph();
         InputStream fIn = null;
         InputStreamReader isr = null;
         BufferedReader input = null;
@@ -254,7 +255,7 @@ public class Launch extends AppCompatActivity {
                 }
                 line = line.replace("\n", BuildConfig.FLAVOR).toLowerCase();
                 if (line.length() == len && line.matches("[a-zA-Z]+")) {
-                    this.wg.addWord(line);
+                    this.wordGraph.addWord(line);
                 }
             }
             try {
@@ -269,6 +270,6 @@ public class Launch extends AppCompatActivity {
         } catch (IOException ioe2) {
             ioe2.printStackTrace();
         }
-        return this.wg;
+        return this.wordGraph;
     }
 }
