@@ -6,10 +6,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+//Taken from Decompiled Sources
 class WordGraph
 {
-    //Taken from Decompiled Source
-    public static final String TAG = "wordGraph";
+    public static final String TAG = "WordGraph";
     private ArrayList<ArrayList<Boolean>> edges = new ArrayList(32);
     private ArrayList<WordGraphNode> nodes = new ArrayList(16);
 
@@ -93,12 +93,13 @@ class WordGraph
         return -1;
     }
 
-    public ArrayList<String> getNeighbors(String word) {
+    public ArrayList<String> getNeighbors(String word)
+    {
         ArrayList<String> neighbors = new ArrayList();
         int wordIdx = getNodeIDX(word);
         if (wordIdx < 0)
         {
-            Log.d(TAG, "getNeighbors: Returned empty neighbors");
+            Log.d(TAG, "getNeighbors: Returned empty neighbors since word not in graph.");
             return neighbors;
         }
         ArrayList<Boolean> row = (ArrayList) this.edges.get(wordIdx);
@@ -125,7 +126,7 @@ class WordGraph
         if (randIndex < 0)
         {
             Log.e(TAG, "getRandomWord: Invalid index returned. Graph is empty");
-            return "Null";
+            return null;
         }
         return (this.nodes.get(randIndex)).word;
     }
@@ -159,7 +160,6 @@ class WordGraph
         g.addWord("wins");
         g.addWord("fine");
         g.addWord("find");
-        Log.d(TAG, g.toString());
         System.out.println(g);
     }
 }

@@ -25,7 +25,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 //Taken from decompiled source
-public class LaunchActivity extends AppCompatActivity {
+public class LaunchActivity extends AppCompatActivity 
+{
     private static final String TAG = "LaunchActivity";
     private Context ctx;
     private EditText endET;
@@ -63,14 +64,16 @@ public class LaunchActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
             this.tv = LaunchActivity.this.findViewById(R.id.tv_loading);
-            this.tv.setVisibility(View.INVISIBLE);
+            this.tv.setVisibility(View.VISIBLE);
             this.tv.setAnimation(AnimationUtils.loadAnimation(LaunchActivity.this.ctx, R.anim.blink));
             this.tv.animate();
         }
 
-        protected ArrayList<String> doInBackground(String... params) {
+        protected ArrayList<String> doInBackground(String[] params)
+        {
             this.start = params[0];
             this.end = params[1];
+            Log.d(TAG, "FindSolutionTask - doInBackground: Building the graph");
             WordGraph wg = LaunchActivity.this.buildGraph(this.start.length());
             HashMap<String, String> map = new HashMap();
             HashMap<String, Boolean> marked = new HashMap();
@@ -91,12 +94,12 @@ public class LaunchActivity extends AppCompatActivity {
                     }
                 }
             }
-            ArrayList<String> soln = new ArrayList(2);
+            ArrayList<String> solution = new ArrayList(2);
             for (String cur2 = this.end; !cur2.equals(this.start); cur2 = (String) map.get(cur2)) {
-                soln.add(0, cur2);
+                solution.add(0, cur2);
             }
-            soln.add(0, this.start);
-            return soln;
+            solution.add(0, this.start);
+            return solution;
         }
 
         protected void onPostExecute(ArrayList<String> solution) {
@@ -128,35 +131,43 @@ public class LaunchActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
             this.tv = LaunchActivity.this.findViewById(R.id.tv_loading);
-            this.tv.setVisibility(View.INVISIBLE);
+            this.tv.setVisibility(View.VISIBLE);
             this.tv.setAnimation(AnimationUtils.loadAnimation(LaunchActivity.this.ctx, R.anim.blink));
             this.tv.animate();
         }
 
-        private String genSequence(String start, int SEQ_LEN) throws IllegalStateException {
+        private String genSequence(String start, int SEQ_LEN) throws IllegalStateException
+        {
             HashMap<String, Boolean> marked = new HashMap();
             marked.put(start, Boolean.valueOf(true));
             int hops = 0;
             LinkedList<String> curRound = new LinkedList();
             curRound.push(start);
             LinkedList<String> nextRound = new LinkedList();
-            while (hops < SEQ_LEN) {
+            while (hops < SEQ_LEN)
+            {
                 Iterator it = curRound.iterator();
-                while (it.hasNext()) {
+                while (it.hasNext())
+                {
                     Iterator it2 = LaunchActivity.this.wordGraph.getNeighbors((String) it.next()).iterator();
-                    while (it2.hasNext()) {
+                    while (it2.hasNext())
+                    {
                         String n = (String) it2.next();
-                        if (!marked.containsKey(n)) {
+                        if (!marked.containsKey(n))
+                        {
                             marked.put(n, Boolean.valueOf(true));
                             nextRound.add(n);
                         }
                     }
                 }
-                if (nextRound.size() != 0) {
+                if (nextRound.size() != 0)
+                {
                     curRound = nextRound;
                     nextRound = new LinkedList();
                     hops++;
-                } else {
+                }
+                else
+                {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("Cannot find a sequence of len: ");
                     stringBuilder.append(SEQ_LEN);
@@ -166,20 +177,24 @@ public class LaunchActivity extends AppCompatActivity {
             return (String) curRound.get(positiveRandom.nextInt(curRound.size()));
         }
 
-        protected String[] doInBackground(Integer... params) {
-            WordGraph wg = LaunchActivity.this.buildGraph(params[0].intValue());
+        protected String[] doInBackground(Integer[] params)
+        {
+            Log.d(TAG, "GenPuzzleTask - doInBackground: Building the graph");
+            WordGraph wg = LaunchActivity.this.buildGraph(params[0]);
             String[] startAndEnd = new String[2];
-            while (startAndEnd[1] == null) {
+
+            while (startAndEnd[1] == null)
+            {
                 startAndEnd[0] = wg.getRandomWord();
-                try {
+                try
+                {
                     startAndEnd[1] = genSequence(startAndEnd[0], 3);
-                } catch (IllegalStateException ise) {
-                    Log.d(LaunchActivity.TAG, ise.getMessage());
-                    String str = LaunchActivity.TAG;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append("Giving up on start word: ");
-                    stringBuilder.append(startAndEnd[0]);
-                    Log.d(str, stringBuilder.toString());
+                }
+                catch (IllegalStateException ise)
+                {
+                    //Log.d(LaunchActivity.TAG, "GenPuzzleTask - doInBackground: Illegal state:" + ise.getMessage());
+                    String message = "Giving up on start word: " + startAndEnd[0];
+                    //Log.d(TAG, "GenPuzzleTask - doInBackground:" + message);
                     startAndEnd[1] = null;
                 }
             }
@@ -188,7 +203,7 @@ public class LaunchActivity extends AppCompatActivity {
 
         protected void onPostExecute(String[] result) {
             this.tv.clearAnimation();
-            this.tv.setVisibility(View.VISIBLE);
+            this.tv.setVisibility(View.INVISIBLE);
             String s = result[0];  //result[null] was original line
             String e = result[1];
             LaunchActivity.this.startET.setText(s);
@@ -234,42 +249,56 @@ public class LaunchActivity extends AppCompatActivity {
         }
     }
 
-    private WordGraph buildGraph(int len) {
-        if (this.wordGraph != null && this.wordGraph.getRandomWord().length() == len) {
+    private WordGraph buildGraph(int len) 
+    {
+        if (this.wordGraph != null && this.wordGraph.getRandomWord().length() == len) 
+        {
+            Log.d(TAG, "buildGraph: Graph already exists");
             return this.wordGraph;
         }
         this.wordGraph = new WordGraph();
-        InputStream fIn = null;
-        InputStreamReader isr = null;
-        BufferedReader input = null;
-        try {
-            fIn = getAssets().open("words_simple.txt");
-            isr = new InputStreamReader(fIn);
-            input = new BufferedReader(isr);
-            String line = BuildConfig.FLAVOR;
-            while (true) {
-                String readLine = input.readLine();
+        InputStream inputStream = null;
+        InputStreamReader streamReader = null;
+        BufferedReader bufferedReader = null;
+        Log.d(TAG, "buildGraph: Init area");
+        try 
+        {
+            Log.d(TAG, "buildGraph: Inside try block");
+            inputStream = getResources().openRawResource(R.raw.words_test);
+            streamReader = new InputStreamReader(inputStream);
+            bufferedReader = new BufferedReader(streamReader);
+            String line;
+            while (true) 
+            {
+                String readLine = bufferedReader.readLine();
                 line = readLine;
                 if (readLine == null) {
                     break;
                 }
-                line = line.replace("\n", BuildConfig.FLAVOR).toLowerCase();
+                line = line.replace("\n", "").toLowerCase();
                 if (line.length() == len && line.matches("[a-zA-Z]+")) {
                     this.wordGraph.addWord(line);
                 }
             }
-            try {
-                isr.close();
-                if (fIn != null) {
-                    fIn.close();
+            try 
+            {
+                streamReader.close();
+                if (inputStream != null)
+                {
+                    inputStream.close();
                 }
-                input.close();
-            } catch (IOException ioe) {
+                bufferedReader.close();
+            } 
+            catch (IOException ioe) 
+            {
                 ioe.printStackTrace();
             }
-        } catch (IOException ioe2) {
+        } 
+        catch (IOException ioe2) 
+        {
             ioe2.printStackTrace();
         }
+        
         return this.wordGraph;
     }
 }
