@@ -145,7 +145,7 @@ class wordGraph {
         g.addWord("wins");
         g.addWord("fine");
         g.addWord("find");
-        //Log.d(TAG, g.toString());
+        Log.d(TAG, g.toString());
         System.out.println(g);
     }
 }
