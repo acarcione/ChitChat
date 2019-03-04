@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/background">
 
 
     <ImageView
@@ -19,26 +20,23 @@
         app:layout_constraintVertical_bias="0.768" />
 
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="startGame"
+        android:text="Play"
+        app:layout_constraintStart_toStartOf="@+id/EditText2"
+        app:layout_constraintTop_toBottomOf="@+id/EditText2" />
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="16dp"
-        android:text="Play"
-        android:onClick="startGame"
-        app:layout_constraintStart_toStartOf="@+id/EditText2"
-        app:layout_constraintTop_toBottomOf="@+id/EditText2" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-
         android:text="New Word"
         app:layout_constraintStart_toStartOf="@+id/EditText1"
         app:layout_constraintTop_toBottomOf="@+id/EditText1" />
