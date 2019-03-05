@@ -26,6 +26,8 @@ import android.support.v7.app.AlertDialog.Builder;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +42,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 //Taken from decompiled sourcce
 public class GameActivity extends AppCompatActivity {
@@ -131,7 +134,7 @@ public class GameActivity extends AppCompatActivity {
             try {
                 String readLine;
                 StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("https://pixabay.com/api/?key=10898531-392d5bb44bdda418e54650675&q=");
+                stringBuilder2.append("https://pixabay.com/api/?key=11798986-90e51c47bdc042dae3106b141&q=");
                 stringBuilder2.append(keyword);
                 HttpURLConnection con = (HttpURLConnection) new URL(stringBuilder2.toString()).openConnection();
                 con.setRequestMethod("GET");
@@ -152,9 +155,11 @@ public class GameActivity extends AppCompatActivity {
                     sb.append(stringBuilder3.toString());
                 }
                 readLine = null;
-                try {
+                try
+                {
                     JSONArray arr = new JSONObject(sb.toString()).getJSONArray("hits");
-                    if (arr.length() == 0) {
+                    if (arr.length() == 0)
+                    {
                         String str2 = GameActivity.TAG;
                         StringBuilder stringBuilder4 = new StringBuilder();
                         stringBuilder4.append("No images for: ");
@@ -171,15 +176,22 @@ public class GameActivity extends AppCompatActivity {
                          */
                         return null;
                     }
-                    while (i < 3) { //was i2, which was defined in above try/catch
+
+                    while (i < 3)
+                    { //was i2, which was defined in above try/catch
                         downloadImageFromURL(arr.getJSONObject(i).getString("webformatURL"), i); //both were also i2
                         i++; //i2
                     }
-                    try {
+
+                    try
+                    {
                         reader.close();
-                    } catch (IOException ioe) {
+                    }
+                    catch (IOException ioe)
+                    {
                         ioe.printStackTrace();
                     }
+
                     Log.d(GameActivity.TAG, "done downloading images.");
                     return null;
                 } catch (JSONException je) {
@@ -227,46 +239,56 @@ public class GameActivity extends AppCompatActivity {
         private int cur = 0;
 
         /* Was C03061 */
-        class GameSlideShow implements Runnable {
-            GameSlideShow() {
-            }
+        class GameSlideShow implements Runnable
+        {
+            GameSlideShow() { }
 
-            public void run() {
+            public void run()
+            {
                 ImageSlideShowThread.this.animatedImageSwitch();
             }
         }
 
-        ImageSlideShowThread() {
-        }
+        ImageSlideShowThread() { }
 
-        public void run() {
-            while (true) {
+        public void run()
+        {
+            while (true)
+            {
                 GameActivity.this.runOnUiThread(new GameSlideShow());
                 this.cur = (this.cur + 1) % 3;
-                try {
+                try
+                {
                     Thread.sleep(8000);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e)
+                {
                     return;
                 }
             }
         }
 
         private void animatedImageSwitch() {
-            Animation anim_out = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.blink);//Was random numbers instead of R.anim.blink
-            final Animation anim_in = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.blink);//Was random numbers
+            Animation anim_out = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.fade_out);//Was random numbers instead of R.anim.blink
+            final Animation anim_in = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.fade_in);//Was random numbers
             anim_out.setDuration(1500);
-            anim_out.setAnimationListener(new Animation.AnimationListener() {
+            anim_out.setAnimationListener(new Animation.AnimationListener()
+            {
 
                 /* Was C03071 */
-                class GameSlideShow2 implements Animation.AnimationListener {
-                    GameSlideShow2() {
+                class GameSlideShow2 implements Animation.AnimationListener
+                {
+                    GameSlideShow2()
+                    {
                     }
 
-                    public void onAnimationStart(Animation animation) {
-                        GameActivity.this.hintIV.setVisibility(View.INVISIBLE);
+                    public void onAnimationStart(Animation animation)
+                    {
+                        GameActivity.this.hintIV.setVisibility(View.VISIBLE);
                     }
 
-                    public void onAnimationRepeat(Animation animation) {
+                    public void onAnimationRepeat(Animation animation)
+                    {
                     }
 
                     public void onAnimationEnd(Animation animation) {
