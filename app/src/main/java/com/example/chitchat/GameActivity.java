@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -425,7 +426,11 @@ public class GameActivity extends AppCompatActivity {
 
     public void hide(View v) {
         this.all.setSystemUiVisibility(2822);
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+        {
+            getSupportActionBar().hide();
+        }
     }
 
     private void endSlideShow() {
