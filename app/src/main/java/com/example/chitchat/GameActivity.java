@@ -40,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+//Taken from decompiled sourcce
 public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
 

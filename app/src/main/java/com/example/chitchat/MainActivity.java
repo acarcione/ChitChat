@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+//Original class
 public class MainActivity extends AppCompatActivity
 {
 
