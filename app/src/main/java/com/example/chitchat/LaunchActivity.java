@@ -264,7 +264,7 @@ public class LaunchActivity extends AppCompatActivity
         try 
         {
             Log.d(TAG, "buildGraph: Inside try block");
-            inputStream = getResources().openRawResource(R.raw.words_test);
+            inputStream = getResources().openRawResource(R.raw.words_unix);
             streamReader = new InputStreamReader(inputStream);
             bufferedReader = new BufferedReader(streamReader);
             String line;
