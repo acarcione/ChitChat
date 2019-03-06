@@ -13,12 +13,15 @@ public class positiveRandom {
         if (r == null) {
             r = new Random();
         }
-        if (bound - 1 < 0)
+        if (bound < 0)
         {
             return -1;
         }
-        int base = r.nextInt(bound - 1) + 1;
-        return base;// & ActivityChooserViewAdapter.MAX_ACTIVITY_COUNT_UNLIMITED;
+        else
+        {
+            int base = r.nextInt(bound);
+            return base;// & ActivityChooserViewAdapter.MAX_ACTIVITY_COUNT_UNLIMITED;
+        }
     }
 
     public static int nextInt(int min, int max) {
