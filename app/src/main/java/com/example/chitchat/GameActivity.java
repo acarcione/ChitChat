@@ -57,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
     private GridView puzzle;
     private ArrayList<String> shown;
     private ArrayList<String> soln;
+    private List<Integer> solutionLength = new ArrayList<>();
 
     /* Was c03021 */
     class Game1 implements View.OnSystemUiVisibilityChangeListener {
@@ -334,6 +335,12 @@ public class GameActivity extends AppCompatActivity {
         stringBuilder2.append("\n");
         Log.d(str2, stringBuilder2.toString());
         this.soln = launchIntent.getStringArrayListExtra("solution");
+
+        for (String solution : soln)
+        {
+            solutionLength.add(solution.length());
+        }
+
         str2 = TAG;
         stringBuilder2 = new StringBuilder();
         stringBuilder2.append("solution: ");
@@ -341,27 +348,31 @@ public class GameActivity extends AppCompatActivity {
         stringBuilder2.append("\n");
         Log.d(str2, stringBuilder2.toString());
         this.shown = new ArrayList(this.soln.size());
-        while (this.shown.size() < this.soln.size()) {
+        while (this.shown.size() < this.soln.size())
+        {
             this.shown.add("    ");
         }
         this.shown.set(0, this.soln.get(0));
         this.shown.set(this.soln.size() - 1, this.soln.get(this.soln.size() - 1));
-        this.puzzle = (GridView) findViewById(R.id.game_words_gv);
+        this.puzzle = findViewById(R.id.game_words_gv);
         this.puzzle.setNumColumns(this.shown.size());
         this.puzzle.setAdapter(new ArrayAdapter(this, R.layout.cell, this.shown.toArray(new String[this.shown.size()])));
     }
 
-    private int getCurrentEmptySpot() {
+    private int getCurrentEmptySpot()
+    {
         int idx = -1;
         String text = "blahblahblah";
-        while (idx < this.puzzle.getChildCount() && !text.equals("    ")) {
+        while (idx < this.puzzle.getChildCount() && !text.equals("    "))
+        {
             idx++;
             text = ((TextView) this.puzzle.getChildAt(idx)).getText().toString();
         }
         return idx;
     }
 
-    public void guess(View v) {
+    public void guess(View v)
+    {
         final TextView tv = (TextView) v;
         final int curEmptySpot = getCurrentEmptySpot();
         Builder builder = new Builder(this);
@@ -372,27 +383,33 @@ public class GameActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
             /* renamed from: edu.fandm.enovak.wordly.Game$2$1 */
-            class C03031 implements View.OnClickListener {
-                C03031() {
-                }
+            class C03031 implements View.OnClickListener
+            {
+                C03031() { }
 
                 public void onClick(View v) {
                     GameActivity.this.finish();
                 }
             }
 
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
+                int curCorrectLength = solutionLength.get(curEmptySpot);
                 String guess = input.getText().toString();
-                if (guess.length() != 4) {
-                    Toast.makeText(GameActivity.this.ctx, "That word is not four letters long!", Toast.LENGTH_SHORT).show();
-                } else if (!WordGraph.oneLetterDiff((String) GameActivity.this.soln.get(curEmptySpot - 1), guess)) {
+                if (guess.length() != curCorrectLength)
+                {
+                    Toast.makeText(GameActivity.this.ctx, "That word is not " + curCorrectLength + " letters long!", Toast.LENGTH_SHORT).show();
+                }
+                else if (!WordGraph.oneLetterDiff((String) GameActivity.this.soln.get(curEmptySpot - 1), guess))
+                {
                     Context access$000 = GameActivity.this.ctx;
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("That word is not one letter different from ");
                     stringBuilder.append((String) GameActivity.this.soln.get(curEmptySpot - 1));
                     stringBuilder.append("!");
                     Toast.makeText(access$000, stringBuilder.toString(), Toast.LENGTH_SHORT).show();
-                } else if (guess.equals(GameActivity.this.soln.get(curEmptySpot))) {
+                } else if (guess.equals(GameActivity.this.soln.get(curEmptySpot)))
+                {
                     GameActivity.this.shown.set(curEmptySpot, guess);
                     tv.setText(guess);
                     String str = GameActivity.TAG;
@@ -403,8 +420,8 @@ public class GameActivity extends AppCompatActivity {
                     stringBuilder2.append(GameActivity.this.soln);
                     Log.d(str, stringBuilder2.toString());
                     if (GameActivity.this.shown.equals(GameActivity.this.soln)) {
-                        Log.d(GameActivity.TAG, "WHOA!");
-                        Toast.makeText(GameActivity.this.ctx, "CORRECT!!", Toast.LENGTH_SHORT).show();
+                        Log.d(GameActivity.TAG, "Player has won game");
+                        Toast.makeText(GameActivity.this.ctx, "Correct!", Toast.LENGTH_SHORT).show();
                         GameActivity.this.endSlideShow();
                         ((Button) GameActivity.this.findViewById(R.id.game_butt_hint)).setVisibility(View.VISIBLE);
                         GameActivity.this.hintIV.setVisibility(View.INVISIBLE);
