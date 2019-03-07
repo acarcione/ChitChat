@@ -6,11 +6,15 @@ import android.preference.PreferenceManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -19,6 +23,8 @@ public class Purchases {
     //Save info to local file
 
     //On first run, class should read the file and set values to an appropriate amount.
+
+    public static final String TAG = "Purchases";
 
 
     public int numWordReveals = 0;
@@ -41,22 +47,44 @@ public class Purchases {
         if (type.equals("Background")){
             //Set background color
             unlockedBackgroundColors.put(color, true);
+            editor.putBoolean("BACKGROUND " + color.toString(), unlockedBackgroundColors.get(color));
         }
         if (type.equals("Font")){
             //Set font color
             unlockedFontColors.put(color, true);
-        }
+            editor.putBoolean("FONT " + color.toString(), unlockedFontColors.get(color));
 
-        for (elementColor c : unlockedBackgroundColors.keySet()) {
-            editor.putBoolean("BACKGROUND " + c.toString(), unlockedBackgroundColors.get(c));
         }
-        for (elementColor c : unlockedFontColors.keySet()) {
-            editor.putBoolean("FONT " + c.toString(), unlockedFontColors.get(c));
+    }
+
+    public void updatePurchase(Context ct){
+        SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
+        Map<String, ?> map = SaveData.getAll();
+
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String[] splited = key.split("\\s+");
+
+            elementColor color = elementColor.valueOf(splited[1]); // First Word is either BACKGROUND or FONT. Want to only append color.
+            Boolean value = Boolean.parseBoolean(entry.getValue().toString());
+
+            if (splited[0].equals("BACKGROUND")){
+                //Update backgrounds
+                unlockedBackgroundColors.put(color, value);
+            }
+            else{
+                //Update fonts
+                unlockedFontColors.put(color, value);
+            }
         }
     }
 
     //Decrement numWordReveals upon use
     public void useWordReveal(Context ct){
+        if (numWordReveals <= 0){
+            Log.d(TAG, "Error"); //Should throw error instead maybe
+            return;
+        }
         numWordReveals--;
         SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
         SharedPreferences.Editor editor = SaveData.edit();
@@ -70,26 +98,4 @@ public class Purchases {
         SharedPreferences.Editor editor = SaveData.edit();
         editor.putInt("numWordReveals", numWordReveals);
     }
-
-    /*
-    //Save info to local file
-    public SharedPreferences getSharedPreferences (Context ctxt) {
-        SharedPreferences SaveData = ctxt.getSharedPreferences("Files", MODE_PRIVATE);
-        SharedPreferences.Editor editor = SaveData.edit();
-
-        //editor.putString("Background Options", unlockedBackgroundColors.toString());
-        //editor.putString("Font Options", unlockedFontColors.toString());
-        //editor.putString("Num Word Reveals", Integer.toString(numWordReveals));
-
-        editor.putBoolean(elementColor.yellow.toString(), false);
-        editor.putBoolean(elementColor.green.toString(), false);
-        editor.putBoolean(elementColor.red.toString(), false);
-        return SaveData;
-    }
-
-
-    public static void main(String[] args) {
-
-    }
-    */
 }
