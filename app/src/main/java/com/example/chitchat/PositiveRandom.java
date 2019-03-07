@@ -3,7 +3,8 @@ package com.example.chitchat;
 //import android.support.v7.widget.ActivityChooserView.ActivityChooserViewAdapter;
 import java.util.Random;
 
-public class positiveRandom {
+public class PositiveRandom
+{
     //Taken from Decompiled Source
 
     public static final String TAG = "acarcione.PositiveRandom";

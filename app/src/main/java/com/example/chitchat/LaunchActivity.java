@@ -13,7 +13,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,6 +36,22 @@ public class LaunchActivity extends AppCompatActivity
     private SharedPreferences prefs;
     private EditText startET;
     private WordGraph wordGraph;
+    private int wordLength = 4;
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_launch);
+        this.ctx = getApplicationContext();
+        this.startET = (EditText) findViewById(R.id.et_start);
+        this.endET = (EditText) findViewById(R.id.et_end);
+        this.prefs = getSharedPreferences(BuildConfig.APPLICATION_ID, 0);
+        this.startET.addTextChangedListener(new textWatcher());
+        if (savedInstanceState == null) {
+            genGame(null);
+        }
+
+        showSpinner();
+    }
 
     /* renamed from: edu.fandm.enovak.wordly.Launch$1 */
     class textWatcher implements TextWatcher {
@@ -57,16 +76,16 @@ public class LaunchActivity extends AppCompatActivity
     class FindSolutionTask extends AsyncTask<String, Void, ArrayList<String>> {
         private String end;
         private String start;
-        private View tv;
+        private View tv_loading;
 
         FindSolutionTask() {
         }
 
         protected void onPreExecute() {
-            this.tv = LaunchActivity.this.findViewById(R.id.tv_loading);
-            this.tv.setVisibility(View.VISIBLE);
-            this.tv.setAnimation(AnimationUtils.loadAnimation(LaunchActivity.this.ctx, R.anim.blink));
-            this.tv.animate();
+            this.tv_loading = LaunchActivity.this.findViewById(R.id.tv_loading);
+            this.tv_loading.setVisibility(View.VISIBLE);
+            this.tv_loading.setAnimation(AnimationUtils.loadAnimation(LaunchActivity.this.ctx, R.anim.blink));
+            this.tv_loading.animate();
         }
 
         protected ArrayList<String> doInBackground(String[] params)
@@ -103,8 +122,8 @@ public class LaunchActivity extends AppCompatActivity
         }
 
         protected void onPostExecute(ArrayList<String> solution) {
-            this.tv.clearAnimation();
-            this.tv.setVisibility(View.INVISIBLE);
+            this.tv_loading.clearAnimation();
+            this.tv_loading.setVisibility(View.INVISIBLE);
             if (solution == null) {
                 StringBuilder tmp = new StringBuilder();
                 tmp.append("no possible solution from '");
@@ -174,7 +193,7 @@ public class LaunchActivity extends AppCompatActivity
                     throw new IllegalStateException(stringBuilder.toString());
                 }
             }
-            return (String) curRound.get(positiveRandom.nextInt(curRound.size()));
+            return (String) curRound.get(PositiveRandom.nextInt(curRound.size()));
         }
 
         protected String[] doInBackground(Integer[] params)
@@ -211,20 +230,40 @@ public class LaunchActivity extends AppCompatActivity
         }
     }
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launch);
-        this.ctx = getApplicationContext();
-        this.startET = (EditText) findViewById(R.id.et_start);
-        this.endET = (EditText) findViewById(R.id.et_end);
-        this.prefs = getSharedPreferences(BuildConfig.APPLICATION_ID, 0);
-        this.startET.addTextChangedListener(new textWatcher());
-        if (savedInstanceState == null) {
-            genGame(null);
-        }
+    //unique code start
+    public void showSpinner()
+    {
+        Spinner spinner = findViewById(R.id.spinner_word_length_launch);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.word_length_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(R.layout.drop_down_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setSelection(2);
+        spinner.setOnItemSelectedListener(spinnerListener);
     }
 
-    public void startGame(View v) {
+    private AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener()
+    {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
+        {
+            wordLength = Integer.valueOf((String) parent.getItemAtPosition(pos));
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent)
+        {
+            // Do nothing
+        }
+    };
+
+    //unique code -- end
+
+    public void startGame(View v)
+    {
         String s = this.startET.getText().toString();
         String e = this.endET.getText().toString();
         if (s.length() == this.endET.getText().toString().length()) {
@@ -233,11 +272,13 @@ public class LaunchActivity extends AppCompatActivity
                 return;
             }
         }
+
         Toast.makeText(this, "Starting word and ending word must be the same length!", Toast.LENGTH_SHORT).show();
     }
 
-    public void genGame(View v) {
-        new GenPuzzleTask().execute(new Integer[]{Integer.valueOf(4)});
+    public void genGame(View v)
+    {
+        new GenPuzzleTask().execute(new Integer[]{Integer.valueOf(wordLength)});
     }
 
     protected void onResume() {

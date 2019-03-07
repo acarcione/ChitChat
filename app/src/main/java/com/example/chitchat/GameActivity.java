@@ -313,7 +313,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //was (5)
@@ -448,7 +449,8 @@ public class GameActivity extends AppCompatActivity {
         new ImageDownloader().execute(new String[]{(String) this.soln.get(1)});
     }
 
-    public void hint(View v) {
+    public void hint(View v)
+    {
         int idx = getCurrentEmptySpot();
         String answer = (String) this.soln.get(idx);
         int i = 0;
@@ -463,7 +465,8 @@ public class GameActivity extends AppCompatActivity {
         Toast.makeText(context, stringBuilder.toString(), Toast.LENGTH_SHORT).show();
     }
 
-    public void hide(View v) {
+    public void hide(View v)
+    {
         this.all.setSystemUiVisibility(2822);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)

@@ -13,10 +13,12 @@ class WordGraph
     private ArrayList<ArrayList<Boolean>> edges = new ArrayList(32);
     private ArrayList<WordGraphNode> nodes = new ArrayList(16);
 
-    class WordGraphNode {
+    class WordGraphNode
+    {
         String word;
 
-        public WordGraphNode(String w) {
+        public WordGraphNode(String w)
+        {
             this.word = w;
         }
 
@@ -113,16 +115,16 @@ class WordGraph
 
     public String getRandomNeighbor(String word) {
         ArrayList<Boolean> row = (ArrayList) this.edges.get(getNodeIDX(word));
-        int outIDX = positiveRandom.nextInt(row.size());
+        int outIDX = PositiveRandom.nextInt(row.size());
         while (!((Boolean) row.get(outIDX)).booleanValue()) {
-            outIDX = positiveRandom.nextInt(row.size());
+            outIDX = PositiveRandom.nextInt(row.size());
         }
         return ((WordGraphNode) this.nodes.get(outIDX)).word;
     }
 
     public String getRandomWord()
     {
-        int randIndex = positiveRandom.nextInt(this.nodes.size());
+        int randIndex = PositiveRandom.nextInt(this.nodes.size());
         if (randIndex < 0)
         {
             Log.e(TAG, "getRandomWord: Invalid index returned. Graph is empty");
