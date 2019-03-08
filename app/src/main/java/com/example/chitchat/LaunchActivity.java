@@ -260,6 +260,17 @@ public class LaunchActivity extends AppCompatActivity
         }
     };
 
+    public void openStore(View v)
+    {
+        Intent storeIntent = new Intent(this.ctx, StoreActivity.class);
+        startActivity(storeIntent);
+    }
+
+    public void openSettings(View v)
+    {
+        Intent settingsIntent = new Intent(this.ctx, SettingsActivity.class);
+        startActivity(settingsIntent);
+    }
     //unique code -- end
 
     public void startGame(View v)
