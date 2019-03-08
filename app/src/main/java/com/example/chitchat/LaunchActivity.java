@@ -301,4 +301,9 @@ public class LaunchActivity extends AppCompatActivity
         
         return this.wordGraph;
     }
+
+    public void storeActivity(View view){
+        Intent intent = new Intent(this, StoreActivity.class);
+        startActivity(intent);
+    }
 }

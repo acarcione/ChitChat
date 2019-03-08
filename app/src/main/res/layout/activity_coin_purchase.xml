@@ -8,26 +8,27 @@
     tools:context=".coinPurchase">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/tenbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="58dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="1dp"
         android:text="10 coin purchase"
-        app:layout_constraintBottom_toTopOf="@+id/button4"
-        app:layout_constraintEnd_toEndOf="@+id/button5"
-        app:layout_constraintStart_toStartOf="@+id/button5" />
+        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/hunderdbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
         android:text="100 coin purchase"
-        app:layout_constraintEnd_toEndOf="@+id/button"
-        app:layout_constraintStart_toStartOf="@+id/button5"
-        app:layout_constraintTop_toTopOf="@+id/textView3" />
+        app:layout_constraintEnd_toEndOf="@+id/tenbutton"
+        app:layout_constraintStart_toStartOf="@+id/thousandbutton"
+        app:layout_constraintTop_toBottomOf="@+id/tenbutton" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/thousandbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -35,7 +36,7 @@
         android:layout_marginTop="56dp"
         android:text="1000 coin purchase"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button4" />
+        app:layout_constraintTop_toBottomOf="@+id/hunderdbutton" />
 
     <TextView
         android:id="@+id/textView2"
@@ -53,13 +54,12 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="79dp"
         android:layout_marginEnd="25dp"
         android:text="Price: 10$"
         android:textColor="@android:color/white"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toTopOf="@+id/hunderdbutton" />
 
     <TextView
         android:id="@+id/textView4"
@@ -71,5 +71,17 @@
         android:textColor="@android:color/white"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/button5" />
+        app:layout_constraintTop_toTopOf="@+id/thousandbutton" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="301dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/title" />
 </android.support.constraint.ConstraintLayout>
