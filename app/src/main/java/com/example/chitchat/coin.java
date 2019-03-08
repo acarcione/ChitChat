@@ -31,6 +31,11 @@ public class coin {
     }
 
 
+    public int getCoins(){
+        return playerCoinCount;
+    }
+
+
 
 
 

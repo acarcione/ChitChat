@@ -14,7 +14,7 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class StoreActivity extends AppCompatActivity {
 
-    private coin playerCountCount;
+    public coin playerCoinCount;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
@@ -32,7 +32,8 @@ public class StoreActivity extends AppCompatActivity {
        // SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
-       // mEditor.putInt("key", playerCoinCount);
+
+        mEditor.putInt("coins", 1000);
         mEditor.commit();
 
 
