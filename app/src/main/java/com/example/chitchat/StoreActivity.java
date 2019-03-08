@@ -28,7 +28,7 @@ public class StoreActivity extends AppCompatActivity {
         Button coinPurcahseButton = (Button)findViewById(R.id.coinPurchase);
         Button instantWordRevealButton = (Button)findViewById(R.id.instantWordReveal);
         Button newFontsButton = (Button)findViewById(R.id.newFonts);
-
+        Button getFreeCoins = (Button)findViewById(R.id.getFreeCoins);
        // SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
@@ -36,7 +36,11 @@ public class StoreActivity extends AppCompatActivity {
         mEditor.putInt("coins", 1000);
         mEditor.commit();
 
-
+        getFreeCoins.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                playerCoinCount.addCoin(500);
+            }
+        });
 
     }
 
@@ -56,6 +60,10 @@ public class StoreActivity extends AppCompatActivity {
         Intent intent = new Intent(this, newFonts.class);
         startActivity(intent);
     }
+
+
+
+
 
 
 }
