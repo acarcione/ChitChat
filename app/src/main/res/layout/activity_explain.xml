@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" android:fillViewport="true"
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.constraint.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:onClick="letsgo" xmlns:app="http://schemas.android.com/apk/res-auto">
-        <ImageView android:id="@+id/explain_iv_title"
-            android:layout_width="275.0dip"
-            android:layout_height="75.0dip"
-            android:src="@drawable/title"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:onClick="continueToGame"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <TextView
+            android:id="@+id/explain_iv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chit Chat"
+            android:fontFamily="sans-serif"
+            android:textSize="48sp"
+            android:textColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toTopOf="@id/explain_iv_demo1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
