@@ -18,7 +18,8 @@ import android.util.Log;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class Purchases {
+public class Purchases
+{
     //Keep Track of mtx user has bought; "Next-Word Reveals", background color options, font color options
     //Save info to local file
 
