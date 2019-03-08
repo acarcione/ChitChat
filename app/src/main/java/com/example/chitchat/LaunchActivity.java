@@ -281,9 +281,10 @@ public class LaunchActivity extends AppCompatActivity
         new GenPuzzleTask().execute(new Integer[]{Integer.valueOf(wordLength)});
     }
 
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
-        findViewById(R.id.tv_loading).setVisibility(View.VISIBLE);
+        findViewById(R.id.tv_loading).setVisibility(View.INVISIBLE);
         if (this.prefs.getBoolean("firstrun", true)) {
             this.prefs.edit().putBoolean("firstrun", false).commit();
             startActivity(new Intent(this.ctx, ExplainActivity.class));

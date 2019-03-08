@@ -443,7 +443,8 @@ public class GameActivity extends AppCompatActivity {
         builder.show();
     }
 
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
         hide(null);
         new ImageDownloader().execute(new String[]{(String) this.soln.get(1)});
