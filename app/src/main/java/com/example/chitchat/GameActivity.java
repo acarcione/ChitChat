@@ -26,6 +26,8 @@ import android.support.v7.app.AlertDialog.Builder;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +42,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 //Taken from decompiled sourcce
 public class GameActivity extends AppCompatActivity {
@@ -54,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
     private GridView puzzle;
     private ArrayList<String> shown;
     private ArrayList<String> soln;
+    private List<Integer> solutionLength = new ArrayList<>();
 
     /* Was c03021 */
     class Game1 implements View.OnSystemUiVisibilityChangeListener {
@@ -131,7 +135,7 @@ public class GameActivity extends AppCompatActivity {
             try {
                 String readLine;
                 StringBuilder stringBuilder2 = new StringBuilder();
-                stringBuilder2.append("https://pixabay.com/api/?key=10898531-392d5bb44bdda418e54650675&q=");
+                stringBuilder2.append("https://pixabay.com/api/?key=11798986-90e51c47bdc042dae3106b141&q=");
                 stringBuilder2.append(keyword);
                 HttpURLConnection con = (HttpURLConnection) new URL(stringBuilder2.toString()).openConnection();
                 con.setRequestMethod("GET");
@@ -152,9 +156,11 @@ public class GameActivity extends AppCompatActivity {
                     sb.append(stringBuilder3.toString());
                 }
                 readLine = null;
-                try {
+                try
+                {
                     JSONArray arr = new JSONObject(sb.toString()).getJSONArray("hits");
-                    if (arr.length() == 0) {
+                    if (arr.length() == 0)
+                    {
                         String str2 = GameActivity.TAG;
                         StringBuilder stringBuilder4 = new StringBuilder();
                         stringBuilder4.append("No images for: ");
@@ -171,15 +177,22 @@ public class GameActivity extends AppCompatActivity {
                          */
                         return null;
                     }
-                    while (i < 3) { //was i2, which was defined in above try/catch
+
+                    while (i < 3)
+                    { //was i2, which was defined in above try/catch
                         downloadImageFromURL(arr.getJSONObject(i).getString("webformatURL"), i); //both were also i2
                         i++; //i2
                     }
-                    try {
+
+                    try
+                    {
                         reader.close();
-                    } catch (IOException ioe) {
+                    }
+                    catch (IOException ioe)
+                    {
                         ioe.printStackTrace();
                     }
+
                     Log.d(GameActivity.TAG, "done downloading images.");
                     return null;
                 } catch (JSONException je) {
@@ -227,46 +240,56 @@ public class GameActivity extends AppCompatActivity {
         private int cur = 0;
 
         /* Was C03061 */
-        class GameSlideShow implements Runnable {
-            GameSlideShow() {
-            }
+        class GameSlideShow implements Runnable
+        {
+            GameSlideShow() { }
 
-            public void run() {
+            public void run()
+            {
                 ImageSlideShowThread.this.animatedImageSwitch();
             }
         }
 
-        ImageSlideShowThread() {
-        }
+        ImageSlideShowThread() { }
 
-        public void run() {
-            while (true) {
+        public void run()
+        {
+            while (true)
+            {
                 GameActivity.this.runOnUiThread(new GameSlideShow());
                 this.cur = (this.cur + 1) % 3;
-                try {
+                try
+                {
                     Thread.sleep(8000);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e)
+                {
                     return;
                 }
             }
         }
 
         private void animatedImageSwitch() {
-            Animation anim_out = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.blink);//Was random numbers instead of R.anim.blink
-            final Animation anim_in = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.blink);//Was random numbers
+            Animation anim_out = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.fade_out);//Was random numbers instead of R.anim.blink
+            final Animation anim_in = AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.fade_in);//Was random numbers
             anim_out.setDuration(1500);
-            anim_out.setAnimationListener(new Animation.AnimationListener() {
+            anim_out.setAnimationListener(new Animation.AnimationListener()
+            {
 
                 /* Was C03071 */
-                class GameSlideShow2 implements Animation.AnimationListener {
-                    GameSlideShow2() {
+                class GameSlideShow2 implements Animation.AnimationListener
+                {
+                    GameSlideShow2()
+                    {
                     }
 
-                    public void onAnimationStart(Animation animation) {
-                        GameActivity.this.hintIV.setVisibility(View.INVISIBLE);
+                    public void onAnimationStart(Animation animation)
+                    {
+                        GameActivity.this.hintIV.setVisibility(View.VISIBLE);
                     }
 
-                    public void onAnimationRepeat(Animation animation) {
+                    public void onAnimationRepeat(Animation animation)
+                    {
                     }
 
                     public void onAnimationEnd(Animation animation) {
@@ -290,7 +313,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //was (5)
@@ -312,6 +336,12 @@ public class GameActivity extends AppCompatActivity {
         stringBuilder2.append("\n");
         Log.d(str2, stringBuilder2.toString());
         this.soln = launchIntent.getStringArrayListExtra("solution");
+
+        for (String solution : soln)
+        {
+            solutionLength.add(solution.length());
+        }
+
         str2 = TAG;
         stringBuilder2 = new StringBuilder();
         stringBuilder2.append("solution: ");
@@ -319,27 +349,31 @@ public class GameActivity extends AppCompatActivity {
         stringBuilder2.append("\n");
         Log.d(str2, stringBuilder2.toString());
         this.shown = new ArrayList(this.soln.size());
-        while (this.shown.size() < this.soln.size()) {
+        while (this.shown.size() < this.soln.size())
+        {
             this.shown.add("    ");
         }
         this.shown.set(0, this.soln.get(0));
         this.shown.set(this.soln.size() - 1, this.soln.get(this.soln.size() - 1));
-        this.puzzle = (GridView) findViewById(R.id.game_words_gv);
+        this.puzzle = findViewById(R.id.game_words_gv);
         this.puzzle.setNumColumns(this.shown.size());
         this.puzzle.setAdapter(new ArrayAdapter(this, R.layout.cell, this.shown.toArray(new String[this.shown.size()])));
     }
 
-    private int getCurrentEmptySpot() {
+    private int getCurrentEmptySpot()
+    {
         int idx = -1;
         String text = "blahblahblah";
-        while (idx < this.puzzle.getChildCount() && !text.equals("    ")) {
+        while (idx < this.puzzle.getChildCount() && !text.equals("    "))
+        {
             idx++;
             text = ((TextView) this.puzzle.getChildAt(idx)).getText().toString();
         }
         return idx;
     }
 
-    public void guess(View v) {
+    public void guess(View v)
+    {
         final TextView tv = (TextView) v;
         final int curEmptySpot = getCurrentEmptySpot();
         Builder builder = new Builder(this);
@@ -350,27 +384,33 @@ public class GameActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
             /* renamed from: edu.fandm.enovak.wordly.Game$2$1 */
-            class C03031 implements View.OnClickListener {
-                C03031() {
-                }
+            class C03031 implements View.OnClickListener
+            {
+                C03031() { }
 
                 public void onClick(View v) {
                     GameActivity.this.finish();
                 }
             }
 
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
+                int curCorrectLength = solutionLength.get(curEmptySpot);
                 String guess = input.getText().toString();
-                if (guess.length() != 4) {
-                    Toast.makeText(GameActivity.this.ctx, "That word is not four letters long!", Toast.LENGTH_SHORT).show();
-                } else if (!WordGraph.oneLetterDiff((String) GameActivity.this.soln.get(curEmptySpot - 1), guess)) {
+                if (guess.length() != curCorrectLength)
+                {
+                    Toast.makeText(GameActivity.this.ctx, "That word is not " + curCorrectLength + " letters long!", Toast.LENGTH_SHORT).show();
+                }
+                else if (!WordGraph.oneLetterDiff((String) GameActivity.this.soln.get(curEmptySpot - 1), guess))
+                {
                     Context access$000 = GameActivity.this.ctx;
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("That word is not one letter different from ");
                     stringBuilder.append((String) GameActivity.this.soln.get(curEmptySpot - 1));
                     stringBuilder.append("!");
                     Toast.makeText(access$000, stringBuilder.toString(), Toast.LENGTH_SHORT).show();
-                } else if (guess.equals(GameActivity.this.soln.get(curEmptySpot))) {
+                } else if (guess.equals(GameActivity.this.soln.get(curEmptySpot)))
+                {
                     GameActivity.this.shown.set(curEmptySpot, guess);
                     tv.setText(guess);
                     String str = GameActivity.TAG;
@@ -381,8 +421,8 @@ public class GameActivity extends AppCompatActivity {
                     stringBuilder2.append(GameActivity.this.soln);
                     Log.d(str, stringBuilder2.toString());
                     if (GameActivity.this.shown.equals(GameActivity.this.soln)) {
-                        Log.d(GameActivity.TAG, "WHOA!");
-                        Toast.makeText(GameActivity.this.ctx, "CORRECT!!", Toast.LENGTH_SHORT).show();
+                        Log.d(GameActivity.TAG, "Player has won game");
+                        Toast.makeText(GameActivity.this.ctx, "Correct!", Toast.LENGTH_SHORT).show();
                         GameActivity.this.endSlideShow();
                         ((Button) GameActivity.this.findViewById(R.id.game_butt_hint)).setVisibility(View.VISIBLE);
                         GameActivity.this.hintIV.setVisibility(View.INVISIBLE);
@@ -403,13 +443,15 @@ public class GameActivity extends AppCompatActivity {
         builder.show();
     }
 
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
         hide(null);
         new ImageDownloader().execute(new String[]{(String) this.soln.get(1)});
     }
 
-    public void hint(View v) {
+    public void hint(View v)
+    {
         int idx = getCurrentEmptySpot();
         String answer = (String) this.soln.get(idx);
         int i = 0;
@@ -424,7 +466,8 @@ public class GameActivity extends AppCompatActivity {
         Toast.makeText(context, stringBuilder.toString(), Toast.LENGTH_SHORT).show();
     }
 
-    public void hide(View v) {
+    public void hide(View v)
+    {
         this.all.setSystemUiVisibility(2822);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)

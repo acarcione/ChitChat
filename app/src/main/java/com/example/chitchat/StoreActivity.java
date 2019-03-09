@@ -1,69 +1,135 @@
 package com.example.chitchat;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
-
-public class StoreActivity extends AppCompatActivity {
-
-    public coin playerCoinCount;
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
-
-
+public class StoreActivity extends AppCompatActivity
+{
+    private final int FONT_COST = 10;
+    private final int BACKGROUND_COST = 20;
+    private final int REVEAL_COST = 50;
+    private Purchases purchases;
+    private Coins coins;
+    private TextView coinsCount;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
-
-        Button coinPurcahseButton = (Button)findViewById(R.id.coinPurchase);
-        Button instantWordRevealButton = (Button)findViewById(R.id.instantWordReveal);
-        Button newFontsButton = (Button)findViewById(R.id.newFonts);
-        Button getFreeCoins = (Button)findViewById(R.id.getFreeCoins);
-       // SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEditor = mPreferences.edit();
-
-        mEditor.putInt("coins", 1000);
-        mEditor.commit();
-
-        getFreeCoins.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                playerCoinCount.addCoin(500);
-            }
-        });
-
+        purchases = Purchases.getInstance();
+        coins = Coins.getInstance();
+        coinsCount = findViewById(R.id.textView_coins_count_store);
+        updateCoinValue(coins.getCoins());
     }
 
-
-    public void coinPurchase(View view){
-        Intent intent = new Intent(this, coinPurchase.class);
-        startActivity(intent);
+    private void updateCoinValue(int newCoinsVal)
+    {
+        coinsCount.setText(": " + String.valueOf(newCoinsVal));
     }
 
-
-    public void instantWordReveal(View view){
-        Intent intent = new Intent(this, instantWordReveal.class);
-        startActivity(intent);
+    public void onInstantRevealBuyClick(View view)
+    {
+        if (coins.getCoins() >= REVEAL_COST)
+        {
+            coins.subtractCoin(REVEAL_COST, this);
+            purchases.purchaseWordReveal(this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void newFonts(View view){
-        Intent intent = new Intent(this, newFonts.class);
-        startActivity(intent);
+    public void onYellowFontBuyClick(View view)
+    {
+        if (coins.getCoins() >= FONT_COST)
+        {
+            coins.subtractCoin(FONT_COST, this);
+            purchases.purchaseColor(Purchases.ElementColor.Yellow, Purchases.ItemType.Font, this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void onRedFontBuyClick(View view)
+    {
+        if (coins.getCoins() >= FONT_COST)
+        {
+            coins.subtractCoin(FONT_COST, this);
+            purchases.purchaseColor(Purchases.ElementColor.Red, Purchases.ItemType.Font, this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void onGreenFontBuyClick(View view)
+    {
+        if (coins.getCoins() >= FONT_COST)
+        {
+            coins.subtractCoin(FONT_COST, this);
+            purchases.purchaseColor(Purchases.ElementColor.Green, Purchases.ItemType.Font, this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    public void onYellowBackgroundBuyClick(View view)
+    {
+        if (coins.getCoins() >= BACKGROUND_COST)
+        {
+            coins.subtractCoin(BACKGROUND_COST, this);
+            purchases.purchaseColor(Purchases.ElementColor.Yellow, Purchases.ItemType.Background, this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    public void onRedBackgroundBuyClick(View view)
+    {
+        if (coins.getCoins() >= BACKGROUND_COST)
+        {
+            coins.subtractCoin(BACKGROUND_COST, this);
+            purchases.purchaseColor(Purchases.ElementColor.Red, Purchases.ItemType.Background, this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    public void onGreenBackgroundBuyClick(View view)
+    {
+        if (coins.getCoins() >= BACKGROUND_COST)
+        {
+            coins.subtractCoin(BACKGROUND_COST, this);
+            purchases.purchaseColor(Purchases.ElementColor.Green, Purchases.ItemType.Background, this);
+            updateCoinValue(coins.getCoins());
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-
-
+    public void onFreeCoins(View view)
+    {
+        coins.addCoin(100, this);
+        updateCoinValue(coins.getCoins());
+    }
 }
