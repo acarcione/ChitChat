@@ -22,6 +22,7 @@ public class SettingsActivity extends AppCompatActivity
         settings = Settings.getInstance();
         defaultFontButton = findViewById(R.id.radioButton_font_black_settings);
         defaultBgButton = findViewById(R.id.radioButton_bg_white_settings);
+        setDefaultToggles();
     }
 
     public void onRadioButtonClicked(View view)
@@ -125,6 +126,55 @@ public class SettingsActivity extends AppCompatActivity
                 {
                     settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.White, this);
                 }
+                break;
+        }
+    }
+
+    private void setDefaultToggles()
+    {
+        Purchases.ElementColor currentBGColor = settings.getBackgroundColor(this);
+        RadioButton selectedButton;
+        switch (currentBGColor)
+        {
+            case Red:
+                selectedButton = findViewById(R.id.radioButton_bg_red_settings);
+                selectedButton.toggle();
+                break;
+            case Yellow:
+                selectedButton = findViewById(R.id.radioButton_bg_yellow_settings);
+                selectedButton.toggle();
+                break;
+            case Green:
+                selectedButton = findViewById(R.id.radioButton_bg_green_settings);
+                selectedButton.toggle();
+                break;
+            default:
+            case White:
+                selectedButton = findViewById(R.id.radioButton_bg_white_settings);
+                selectedButton.toggle();
+                break;
+        }
+
+
+        Purchases.ElementColor currentFontColor = settings.getFontColor(this);
+        switch (currentFontColor)
+        {
+            case Yellow:
+                selectedButton = findViewById(R.id.radioButton_font_yellow_settings);
+                selectedButton.toggle();
+                break;
+            case Green:
+                selectedButton = findViewById(R.id.radioButton_font_green_settings);
+                selectedButton.toggle();
+                break;
+            case Red:
+                selectedButton = findViewById(R.id.radioButton_font_red_settings);
+                selectedButton.toggle();
+                break;
+            default:
+            case Black:
+                selectedButton = findViewById(R.id.radioButton_font_black_settings);
+                selectedButton.toggle();
                 break;
         }
     }
