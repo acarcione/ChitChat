@@ -35,21 +35,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Yellow" />
+            android:text="Yellow"
+            android:onClick="onRadioButtonClicked"/>
 
         <RadioButton
             android:id="@+id/radioButton_font_green_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Green" />
+            android:text="Green"
+            android:onClick="onRadioButtonClicked"/>
 
         <RadioButton
             android:id="@+id/radioButton_font_red_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Red" />
+            android:text="Red"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/radioButton_font_black_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Black"
+            android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 
     <TextView
@@ -81,14 +92,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Yellow" />
+            android:text="Yellow"
+            android:onClick="onRadioButtonClicked"/>
 
         <RadioButton
             android:id="@+id/radioButton_bg_green_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Green" />
+            android:text="Green"
+            android:onClick="onRadioButtonClicked"/>
 
         <RadioButton
             android:id="@+id/radioButton_bg_red_settings"
@@ -96,5 +109,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Red" />
+
+        <RadioButton
+            android:id="@+id/radioButton_bg_white_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="White"
+            android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 </android.support.constraint.ConstraintLayout>

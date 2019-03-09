@@ -2,19 +2,8 @@ package com.example.chitchat;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-
-import android.preference.PreferenceManager;
-import android.util.Log;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -25,66 +14,101 @@ public class Purchases
 
     //On first run, class should read the file and set values to an appropriate amount.
 
+    private static Purchases instance;
     public static final String TAG = "Purchases";
+
+    private Purchases() {}
+
+    public static Purchases getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new Purchases();
+        }
+
+        return instance;
+    }
 
 
     public int numWordReveals = 0;
-    HashMap<elementColor, Boolean> unlockedFontColors = new HashMap<elementColor, Boolean>();
-    HashMap<elementColor, Boolean> unlockedBackgroundColors = new HashMap<elementColor, Boolean>();
+    HashMap<ElementColor, Boolean> unlockedFontColors = new HashMap<ElementColor, Boolean>();
+    HashMap<ElementColor, Boolean> unlockedBackgroundColors = new HashMap<ElementColor, Boolean>();
 
-    enum elementColor{
-        yellow,
-        green,
-        red
+    enum ElementColor
+    {
+        Yellow,
+        Green,
+        Red,
+        Black,
+        White
+    }
+
+    enum ItemType
+    {
+        Background,
+        Font
     }
 
     //Set value of background/font color key in hashmap to true upon purchase
-    public void setPurchase(elementColor color, String type, Context ct){
+    public void setPurchase(ElementColor color, ItemType type, Context ct)
+    {
 
         SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
         SharedPreferences.Editor editor = SaveData.edit();
 
 
-        if (type.equals("Background")){
+        if (type.equals(ItemType.Background)){
             //Set background color
             unlockedBackgroundColors.put(color, true);
             editor.putBoolean("BACKGROUND " + color.toString(), unlockedBackgroundColors.get(color));
         }
-        if (type.equals("Font")){
+        if (type.equals(ItemType.Font)){
             //Set font color
             unlockedFontColors.put(color, true);
             editor.putBoolean("FONT " + color.toString(), unlockedFontColors.get(color));
-
         }
+
+        editor.apply();
     }
 
-    public void updatePurchase(Context ct){
-        SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
-        Map<String, ?> map = SaveData.getAll();
+    public void updatePurchases(Context ct)
+    {
+        SharedPreferences saveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
 
-        for (Map.Entry<String, ?> entry : map.entrySet()) {
-            String key = entry.getKey();
-            String[] splited = key.split("\\s+");
-
-            elementColor color = elementColor.valueOf(splited[1]); // First Word is either BACKGROUND or FONT. Want to only append color.
-            Boolean value = Boolean.parseBoolean(entry.getValue().toString());
-
-            if (splited[0].equals("BACKGROUND")){
-                //Update backgrounds
-                unlockedBackgroundColors.put(color, value);
+        for (ElementColor color : ElementColor.values())
+        {
+            //Update backgrounds
+            String key = "BACKGROUND " + color.toString();
+            String val = saveData.getString(key, null);
+            if (val == null)
+            {
+                unlockedBackgroundColors.put(color, false);
             }
-            else{
-                //Update fonts
-                unlockedFontColors.put(color, value);
+            else
+            {
+                unlockedBackgroundColors.put(color, Boolean.valueOf(val));
+            }
+
+            //Update fonts
+            key = "FONT " + color.toString();
+            val = saveData.getString(key, null);
+            if (val == null)
+            {
+                unlockedFontColors.put(color, false);
+            }
+            else
+            {
+                unlockedFontColors.put(color, Boolean.valueOf(val));
             }
         }
     }
 
     //Decrement numWordReveals upon use
-    public void useWordReveal(Context ct){
-        if (numWordReveals <= 0){
-            Log.d(TAG, "Error"); //Should throw error instead maybe
-            return;
+    public void useWordReveal(Context ct)
+    {
+        if (numWordReveals <= 0)
+        {
+            throw new IllegalStateException("Don't have any word reveals to use");
         }
         numWordReveals--;
         SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
@@ -93,10 +117,24 @@ public class Purchases
     }
 
     //Increment numWordReveals upon purchase
-    public void purchaseWordReveal(Context ct){
+    public void purchaseWordReveal(Context ct)
+    {
         numWordReveals++;
         SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
         SharedPreferences.Editor editor = SaveData.edit();
         editor.putInt("numWordReveals", numWordReveals);
+    }
+
+    public boolean isUnlocked(ItemType type, ElementColor color)
+    {
+        switch (type)
+        {
+            case Font:
+                return unlockedFontColors.get(color);
+            case Background:
+                return unlockedBackgroundColors.get(color);
+        }
+
+        return false;
     }
 }

@@ -50,7 +50,10 @@ public class LaunchActivity extends AppCompatActivity
             genGame(null);
         }
 
+        // --unique code start--
         showSpinner();
+        Purchases.getInstance().updatePurchases(this);
+        // -- unique code end --
     }
 
     /* renamed from: edu.fandm.enovak.wordly.Launch$1 */
@@ -230,7 +233,7 @@ public class LaunchActivity extends AppCompatActivity
         }
     }
 
-    //unique code start
+    // --unique code start--
     public void showSpinner()
     {
         Spinner spinner = findViewById(R.id.spinner_word_length_launch);
@@ -271,7 +274,7 @@ public class LaunchActivity extends AppCompatActivity
         Intent settingsIntent = new Intent(this.ctx, SettingsActivity.class);
         startActivity(settingsIntent);
     }
-    //unique code -- end
+    // -- unique code end --
 
     public void startGame(View v)
     {
