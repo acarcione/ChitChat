@@ -1,3 +1,16 @@
+/*
+.
+.
+.
+.
+.
+============== We will be using James's free gift for this project. ==============
+.
+.
+.
+.
+.
+ */
 package com.example.chitchat;
 
 import android.content.Context;
