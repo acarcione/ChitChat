@@ -7,4 +7,5 @@
     android:layout_height="wrap_content"
     android:onClick="guess"
     android:fontFamily="serif-monospace"
+    android:textColor="@color/colorBlack"
     xmlns:android="http://schemas.android.com/apk/res/android" />

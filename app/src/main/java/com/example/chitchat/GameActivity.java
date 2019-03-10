@@ -26,8 +26,6 @@ import android.support.v7.app.AlertDialog.Builder;
 import android.widget.Toast;
 
 
-import com.bumptech.glide.Glide;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,11 +42,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-//Taken from decompiled sourcce
+//Taken from decompiled source
 public class GameActivity extends AppCompatActivity {
     public static final String TAG = "GameActivity";
 
-    private View all;
+    private View gameBackground;
     private Bitmap[] bitmaps = new Bitmap[3];
     private Context ctx;
     protected ImageView hintIV;
@@ -58,6 +56,206 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<String> shown;
     private ArrayList<String> soln;
     private List<Integer> solutionLength = new ArrayList<>();
+    private TextView revealCount;
+    private Button useRevealButton;
+    private Purchases purchases;
+    private Settings settings;
+    private Button hintButton;
+    private View background;
+
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //was (5)
+        this.gameBackground = findViewById(R.id.all);
+        this.hintIV = (ImageView) findViewById(R.id.game_iv_hint);
+        this.ctx = getApplicationContext();
+        this.gameBackground.setOnSystemUiVisibilityChangeListener(new Game1());
+        Intent launchIntent = getIntent();
+        String start = launchIntent.getStringExtra("start_word");
+        String str = TAG;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(start);
+        stringBuilder.append("\n");
+        Log.d(str, stringBuilder.toString());
+        str = launchIntent.getStringExtra("end_word");
+        String str2 = TAG;
+        StringBuilder stringBuilder2 = new StringBuilder();
+        stringBuilder2.append(str);
+        stringBuilder2.append("\n");
+        Log.d(str2, stringBuilder2.toString());
+        this.soln = launchIntent.getStringArrayListExtra("solution");
+
+        for (String solution : soln)
+        {
+            solutionLength.add(solution.length());
+        }
+
+        str2 = TAG;
+        stringBuilder2 = new StringBuilder();
+        stringBuilder2.append("solution: ");
+        stringBuilder2.append(this.soln);
+        stringBuilder2.append("\n");
+        Log.d(str2, stringBuilder2.toString());
+        this.shown = new ArrayList(this.soln.size());
+        while (this.shown.size() < this.soln.size())
+        {
+            this.shown.add("    ");
+        }
+        this.shown.set(0, this.soln.get(0));
+        this.shown.set(this.soln.size() - 1, this.soln.get(this.soln.size() - 1));
+        this.puzzle = findViewById(R.id.game_words_gv);
+        this.puzzle.setNumColumns(this.shown.size());
+        this.puzzle.setAdapter(new ArrayAdapter<>(this, R.layout.cell, shown.toArray(new String[shown.size()])));
+
+        // -- unique code --
+        purchases = Purchases.getInstance();
+        revealCount = findViewById(R.id.textView_revealsLeft_game);
+        useRevealButton = findViewById(R.id.button_useReveal_game);
+        hintButton = findViewById(R.id.game_butt_hint);
+        updateRevealCount();
+        settings = Settings.getInstance();
+
+        final Handler handler = new Handler();
+        setBackgroundColor();
+        //Wait until the grid is fully initialized, then update colors
+        final Runnable r = new Runnable()
+        {
+            public void run()
+            {
+                if (puzzle.getChildAt(0) == null)
+                {
+                    handler.postDelayed(this, 1000);
+                }
+                else
+                {
+                    setFontColor();
+                }
+            }
+        };
+
+        handler.postDelayed(r, 1);
+        // -- end unique code --
+    }
+
+    // -- unique code --
+    private void updateRevealCount()
+    {
+        revealCount.setText("Reveals: " + String.valueOf(purchases.getNumWordReveals()));
+    }
+
+    public void onRevealButtonClicked(View view)
+    {
+        if (purchases.getNumWordReveals() > 0)
+        {
+            //do the thing
+            purchases.useWordReveal(this);
+            updateRevealCount();
+            int emptyIndex = getCurrentEmptySpot();
+            String solution = soln.get(emptyIndex);
+            shown.set(emptyIndex, solution);
+            TextView emptySpotTextView = (TextView) puzzle.getChildAt(emptyIndex);
+            emptySpotTextView.setText(solution);
+            if (shown.equals(soln))
+            {
+                winTheGame();
+            }
+        }
+        else
+        {
+            Toast.makeText(this, "Insufficient reveals", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private View.OnClickListener winListener = new View.OnClickListener()
+    {
+        public void onClick(View v)
+        {
+            GameActivity.this.finish();
+        }
+    };
+
+    private void setFontColor()
+    {
+        Purchases.ElementColor selectedColor = settings.getFontColor(this);
+        if (selectedColor.equals(Purchases.ElementColor.Black))
+        {
+            for (int i = 0; i < puzzle.getChildCount(); i++)
+            {
+                TextView text = (TextView) puzzle.getChildAt(i);
+                if (text != null)
+                {
+                    text.setTextColor(getResources().getColor(R.color.colorBlack));
+                }
+            }
+            hintButton.setTextColor(getResources().getColor(R.color.colorBlack));
+            useRevealButton.setTextColor(getResources().getColor(R.color.colorBlack));
+        }
+        else if(selectedColor.equals(Purchases.ElementColor.Green))
+        {
+            for (int i = 0; i < puzzle.getChildCount(); i++)
+            {
+                TextView text = (TextView) puzzle.getChildAt(i);
+                if (text != null)
+                {
+                    text.setTextColor(getResources().getColor(R.color.colorGreen));
+                }
+            }
+            hintButton.setTextColor(getResources().getColor(R.color.colorGreen));
+            useRevealButton.setTextColor(getResources().getColor(R.color.colorGreen));
+        }
+        else if (selectedColor.equals(Purchases.ElementColor.Yellow))
+        {
+            for (int i = 0; i < puzzle.getChildCount(); i++)
+            {
+                TextView text = (TextView) puzzle.getChildAt(i);
+                if (text != null)
+                {
+                    text.setTextColor(getResources().getColor(R.color.colorYellow));
+                }
+            }
+
+            hintButton.setTextColor(getResources().getColor(R.color.colorYellow));
+            useRevealButton.setTextColor(getResources().getColor(R.color.colorYellow));
+        }
+        else if (selectedColor.equals(Purchases.ElementColor.Red))
+        {
+            for (int i = 0; i < puzzle.getChildCount(); i++)
+            {
+                TextView text = (TextView) puzzle.getChildAt(i);
+                if (text != null)
+                {
+                    text.setTextColor(getResources().getColor(R.color.colorRed));
+                }
+            }
+
+            hintButton.setTextColor(getResources().getColor(R.color.colorRed));
+            useRevealButton.setTextColor(getResources().getColor(R.color.colorRed));
+        }
+    }
+
+    private void setBackgroundColor()
+    {
+        Purchases.ElementColor selectedColor = settings.getBackgroundColor(this);
+        if (selectedColor.equals(Purchases.ElementColor.White))
+        {
+            gameBackground.setBackgroundColor(getResources().getColor(R.color.colorLight));
+        }
+        else if (selectedColor.equals(Purchases.ElementColor.Yellow))
+        {
+            gameBackground.setBackgroundColor(getResources().getColor(R.color.colorYellow));
+        }
+        else if (selectedColor.equals(Purchases.ElementColor.Green))
+        {
+            gameBackground.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+        }
+        else if (selectedColor.equals(Purchases.ElementColor.Red))
+        {
+            gameBackground.setBackgroundColor(getResources().getColor(R.color.colorRed));
+        }
+    }
+    // -- end unique code --
 
     /* Was c03021 */
     class Game1 implements View.OnSystemUiVisibilityChangeListener {
@@ -312,54 +510,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); //was (5)
-        this.all = findViewById(R.id.all);
-        this.hintIV = (ImageView) findViewById(R.id.game_iv_hint);
-        this.ctx = getApplicationContext();
-        this.all.setOnSystemUiVisibilityChangeListener(new Game1());
-        Intent launchIntent = getIntent();
-        String start = launchIntent.getStringExtra("start_word");
-        String str = TAG;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(start);
-        stringBuilder.append("\n");
-        Log.d(str, stringBuilder.toString());
-        str = launchIntent.getStringExtra("end_word");
-        String str2 = TAG;
-        StringBuilder stringBuilder2 = new StringBuilder();
-        stringBuilder2.append(str);
-        stringBuilder2.append("\n");
-        Log.d(str2, stringBuilder2.toString());
-        this.soln = launchIntent.getStringArrayListExtra("solution");
-
-        for (String solution : soln)
-        {
-            solutionLength.add(solution.length());
-        }
-
-        str2 = TAG;
-        stringBuilder2 = new StringBuilder();
-        stringBuilder2.append("solution: ");
-        stringBuilder2.append(this.soln);
-        stringBuilder2.append("\n");
-        Log.d(str2, stringBuilder2.toString());
-        this.shown = new ArrayList(this.soln.size());
-        while (this.shown.size() < this.soln.size())
-        {
-            this.shown.add("    ");
-        }
-        this.shown.set(0, this.soln.get(0));
-        this.shown.set(this.soln.size() - 1, this.soln.get(this.soln.size() - 1));
-        this.puzzle = findViewById(R.id.game_words_gv);
-        this.puzzle.setNumColumns(this.shown.size());
-        this.puzzle.setAdapter(new ArrayAdapter(this, R.layout.cell, this.shown.toArray(new String[this.shown.size()])));
-    }
-
     private int getCurrentEmptySpot()
     {
         int idx = -1;
@@ -369,7 +519,23 @@ public class GameActivity extends AppCompatActivity {
             idx++;
             text = ((TextView) this.puzzle.getChildAt(idx)).getText().toString();
         }
+
         return idx;
+    }
+
+    private void winTheGame()
+    {
+        Log.d(GameActivity.TAG, "Player has won game");
+        Toast.makeText(GameActivity.this.ctx, "Correct!", Toast.LENGTH_SHORT).show();
+        GameActivity.this.endSlideShow();
+        ((Button) GameActivity.this.findViewById(R.id.game_butt_hint)).setVisibility(View.INVISIBLE);
+        GameActivity.this.hintIV.setVisibility(View.VISIBLE);
+        useRevealButton.setVisibility(View.GONE);
+        GameActivity.this.hintIV.setImageResource(R.drawable.star);
+        GameActivity.this.hintIV.setBackground(null);
+        GameActivity.this.hintIV.setAnimation(AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.spin));
+        GameActivity.this.hintIV.animate();
+        GameActivity.this.hintIV.setOnClickListener(winListener);
     }
 
     public void guess(View v)
@@ -382,16 +548,6 @@ public class GameActivity extends AppCompatActivity {
         input.setInputType(1);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-            /* renamed from: edu.fandm.enovak.wordly.Game$2$1 */
-            class C03031 implements View.OnClickListener
-            {
-                C03031() { }
-
-                public void onClick(View v) {
-                    GameActivity.this.finish();
-                }
-            }
 
             public void onClick(DialogInterface dialog, int which)
             {
@@ -421,16 +577,7 @@ public class GameActivity extends AppCompatActivity {
                     stringBuilder2.append(GameActivity.this.soln);
                     Log.d(str, stringBuilder2.toString());
                     if (GameActivity.this.shown.equals(GameActivity.this.soln)) {
-                        Log.d(GameActivity.TAG, "Player has won game");
-                        Toast.makeText(GameActivity.this.ctx, "Correct!", Toast.LENGTH_SHORT).show();
-                        GameActivity.this.endSlideShow();
-                        ((Button) GameActivity.this.findViewById(R.id.game_butt_hint)).setVisibility(View.VISIBLE);
-                        GameActivity.this.hintIV.setVisibility(View.INVISIBLE);
-                        GameActivity.this.hintIV.setImageResource(R.drawable.star);
-                        GameActivity.this.hintIV.setBackground(null);
-                        GameActivity.this.hintIV.setAnimation(AnimationUtils.loadAnimation(GameActivity.this.ctx, R.anim.spin));
-                        GameActivity.this.hintIV.animate();
-                        GameActivity.this.hintIV.setOnClickListener(new C03031());
+                        winTheGame();
                         return;
                     }
                     new ImageDownloader().execute(new String[]{(String) GameActivity.this.soln.get(curEmptySpot + 1)});
@@ -468,7 +615,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void hide(View v)
     {
-        this.all.setSystemUiVisibility(2822);
+        this.gameBackground.setSystemUiVisibility(2822);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
         {

@@ -45,8 +45,10 @@ public class SettingsActivity extends AppCompatActivity
                         defaultFontButton.toggle();
                         Toast.makeText(this, "You haven't unlocked that yet. Checkout the store.", Toast.LENGTH_SHORT).show();
                     }
-
-                    settings.setCurrentColor(Purchases.ItemType.Font, Purchases.ElementColor.Yellow, this);
+                    else
+                    {
+                        settings.setCurrentColor(Purchases.ItemType.Font, Purchases.ElementColor.Yellow, this);
+                    }
                 }
                 break;
             case R.id.radioButton_font_green_settings:
@@ -59,9 +61,12 @@ public class SettingsActivity extends AppCompatActivity
                         defaultFontButton.toggle();
                         Toast.makeText(this, "You haven't unlocked that yet. Checkout the store.", Toast.LENGTH_SHORT).show();
                     }
-
-                    settings.setCurrentColor(Purchases.ItemType.Font, Purchases.ElementColor.Green, this);
+                    else
+                    {
+                        settings.setCurrentColor(Purchases.ItemType.Font, Purchases.ElementColor.Green, this);
+                    }
                 }
+                break;
             case R.id.radioButton_font_red_settings:
                 if (checked)
                 {
@@ -72,8 +77,10 @@ public class SettingsActivity extends AppCompatActivity
                         defaultFontButton.toggle();
                         Toast.makeText(this, "You haven't unlocked that yet. Checkout the store.", Toast.LENGTH_SHORT).show();
                     }
-
-                    settings.setCurrentColor(Purchases.ItemType.Font, Purchases.ElementColor.Red, this);
+                    else
+                    {
+                        settings.setCurrentColor(Purchases.ItemType.Font, Purchases.ElementColor.Red, this);
+                    }
                 }
                 break;
             case R.id.radioButton_font_black_settings:
@@ -89,8 +96,10 @@ public class SettingsActivity extends AppCompatActivity
                         defaultBgButton.toggle();
                         Toast.makeText(this, "You haven't unlocked that yet. Checkout the store.", Toast.LENGTH_SHORT).show();
                     }
-
-                    settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.Red, this);
+                    else
+                    {
+                        settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.Red, this);
+                    }
                 }
                 break;
             case R.id.radioButton_bg_yellow_settings:
@@ -103,8 +112,10 @@ public class SettingsActivity extends AppCompatActivity
                         defaultBgButton.toggle();
                         Toast.makeText(this, "You haven't unlocked that yet. Checkout the store.", Toast.LENGTH_SHORT).show();
                     }
-
-                    settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.Yellow, this);
+                    else
+                    {
+                        settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.Yellow, this);
+                    }
                 }
                 break;
             case R.id.radioButton_bg_green_settings:
@@ -117,8 +128,10 @@ public class SettingsActivity extends AppCompatActivity
                         defaultBgButton.toggle();
                         Toast.makeText(this, "You haven't unlocked that yet. Checkout the store.", Toast.LENGTH_SHORT).show();
                     }
-
-                    settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.Green, this);
+                    else
+                    {
+                        settings.setCurrentColor(Purchases.ItemType.Background, Purchases.ElementColor.Green, this);
+                    }
                 }
                 break;
             case R.id.radioButton_bg_white_settings:

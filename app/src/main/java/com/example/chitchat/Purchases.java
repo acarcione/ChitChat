@@ -16,6 +16,9 @@ public class Purchases
 
     private static Purchases instance;
     public static final String TAG = "Purchases";
+    public int numWordReveals = 0;
+    HashMap<ElementColor, Boolean> unlockedFontColors = new HashMap<ElementColor, Boolean>();
+    HashMap<ElementColor, Boolean> unlockedBackgroundColors = new HashMap<ElementColor, Boolean>();
 
     private Purchases() {}
 
@@ -28,11 +31,6 @@ public class Purchases
 
         return instance;
     }
-
-
-    public int numWordReveals = 0;
-    HashMap<ElementColor, Boolean> unlockedFontColors = new HashMap<ElementColor, Boolean>();
-    HashMap<ElementColor, Boolean> unlockedBackgroundColors = new HashMap<ElementColor, Boolean>();
 
     enum ElementColor
     {
@@ -87,6 +85,9 @@ public class Purchases
             val = saveData.getBoolean(key, false);
             unlockedFontColors.put(color, val);
         }
+
+        //Reveals
+        numWordReveals = saveData.getInt("numWordReveals", 0);
     }
 
     //Decrement numWordReveals upon use
@@ -97,18 +98,19 @@ public class Purchases
             throw new IllegalStateException("Don't have any word reveals to use");
         }
         numWordReveals--;
-        SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
-        SharedPreferences.Editor editor = SaveData.edit();
-        editor.putInt("numWordReveals", numWordReveals);
+        updateRevealCount(ct);
     }
 
     //Increment numWordReveals upon purchase
     public void purchaseWordReveal(Context ct)
     {
         numWordReveals++;
-        SharedPreferences SaveData = ct.getSharedPreferences("Files", MODE_PRIVATE);
-        SharedPreferences.Editor editor = SaveData.edit();
-        editor.putInt("numWordReveals", numWordReveals);
+        updateRevealCount(ct);
+    }
+
+    public int getNumWordReveals()
+    {
+        return numWordReveals;
     }
 
     public boolean isUnlocked(ItemType type, ElementColor color)
@@ -122,5 +124,12 @@ public class Purchases
         }
 
         return false;
+    }
+    private void updateRevealCount(Context context)
+    {
+        SharedPreferences SaveData = context.getSharedPreferences("Files", MODE_PRIVATE);
+        SharedPreferences.Editor editor = SaveData.edit();
+        editor.putInt("numWordReveals", numWordReveals);
+        editor.apply();
     }
 }
